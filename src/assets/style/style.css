@@ -1,0 +1,22 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html,
+body,
+#app
+{
+  height: 100%;
+}
+#game{
+  width: 100%;
+  height: 100%;
+  display: block;
+  background-color: #767a7d;
+}
+.fps{
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
