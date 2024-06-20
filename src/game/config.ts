@@ -3,7 +3,7 @@
  * @Author: wind-lc
  * @version: 1.0
  * @Date: 2024-06-17 15:13:38
- * @LastEditTime: 2024-06-17 18:01:38
+ * @LastEditTime: 2024-06-20 11:16:22
  * @FilePath: \striker-1945\src\game\config.ts
  */
 // 图片类型
@@ -25,6 +25,13 @@ type TplayerAttitudeCof = {
   sy: number
   // 影子配置
   shadow: TplayerShadowAttitudeCof
+}
+// 玩家飞机螺旋桨
+type TplayerPropellerAttitudeCof = {
+  // 开始剪切的x坐标位置
+  sx: number
+  // 开始剪切的y坐标位置
+  sy: number
 }
 // 是否支持离屏渲染画布
 const isOffscreenCanvas: boolean = typeof OffscreenCanvas !== 'undefined'
@@ -50,9 +57,9 @@ const playerCof = {
   // 图片高度
   ih: 51,
   // 影子x坐标偏移
-  sx: 16.5,
+  sx: -10,
   // 影子y坐标偏移
-  sy: 55,
+  sy: 65,
   // 影子宽度
   sw: 33,
   // 影子高度
@@ -61,9 +68,32 @@ const playerCof = {
   siw: 66,
   // 影子图片高度
   sih: 51,
+  // 螺旋桨宽度
+  pw: 23,
+  // 螺旋桨高度
+  ph: 4,
+  // 螺旋桨图片宽度
+  piw: 46,
+  // 螺旋桨图片高度
+  pih: 8,
   // 生命值
-  hp: 100
+  hp: 5
 }
+//
+const playerPropellerAttitudeCof: TplayerPropellerAttitudeCof[] = [
+  {
+    sx: 0,
+    sy: 0
+  },
+  {
+    sx: 46,
+    sy: 0
+  },
+  {
+    sx: 92,
+    sy: 0
+  },
+]
 // 玩家飞机多个姿态合成雪碧图
 const playerAttitudeCof: TplayerAttitudeCof[] = [
   {
@@ -139,6 +169,74 @@ const playerAttitudeCof: TplayerAttitudeCof[] = [
     }
   }
 ]
+// 摧毁配置
+const destroyCof = {
+  w: 70,
+  h: 68
+}
+// 摧毁动画配置
+const destroyAnimationCof = [
+  {
+    sx: 0,
+    sy: 0
+  },
+  {
+    sx: 82,
+    sy: 0
+  },
+  {
+    sx: 164,
+    sy: 0
+  },
+  {
+    sx: 246,
+    sy: 0
+  },
+  {
+    sx: 328,
+    sy: 0
+  },
+  {
+    sx: 410,
+    sy: 0
+  },
+  {
+    sx: 492,
+    sy: 0
+  },
+  {
+    sx: 574,
+    sy: 0
+  },
+  {
+    sx: 656,
+    sy: 0
+  },
+  {
+    sx: 738,
+    sy: 0
+  },
+  {
+    sx: 820,
+    sy: 0
+  },
+  {
+    sx: 902,
+    sy: 0
+  },
+  {
+    sx: 984,
+    sy: 0
+  },
+  {
+    sx: 1066,
+    sy: 0
+  },
+  {
+    sx: 1148,
+    sy: 0
+  }
+]
 // 所有图片
 const imgs:TImg = {
   '0': '/src/assets/img/0.webp',
@@ -151,13 +249,20 @@ const imgs:TImg = {
   '7': '/src/assets/img/7.webp',
   '8': '/src/assets/img/8.webp',
   '9': '/src/assets/img/9.webp',
-  'player': '/src/assets/img/player.webp'
+  'propeller1': '/src/assets/img/propeller1.webp',
+  'player': '/src/assets/img/player.webp',
+  'destroy': '/src/assets/img/destroy.webp',
+  'bullet1': '/src/assets/img/bullet1.webp',
+  'bullet2': '/src/assets/img/bullet2.webp'
 }
 export {
   isOffscreenCanvas,
   fpsCof,
   playerCof,
+  playerPropellerAttitudeCof,
   playerAttitudeCof,
+  destroyCof,
+  destroyAnimationCof,
   imgs
 }
 

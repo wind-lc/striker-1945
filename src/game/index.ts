@@ -3,12 +3,13 @@
  * @Author: wind-lc
  * @version: 1.0
  * @Date: 2024-06-14 11:19:15
- * @LastEditTime: 2024-06-18 13:32:08
+ * @LastEditTime: 2024-06-20 15:01:34
  * @FilePath: \striker-1945\src\game\index.ts
  */
 import { imgs, isOffscreenCanvas, playerCof } from './config'
 import Fps from './fps'
 import Player from './player'
+import { createOffscreenCanvas } from './utils'
 // 离屏画布
 export type TOffscreenCas = {
   [index:string]: HTMLCanvasElement | OffscreenCanvas
@@ -65,7 +66,8 @@ export default class Game {
     this.elements = {}
     // 默认底部居中
     this.playerLocation = {
-      x: Math.floor(this.cas.width / 2),
+      // x: Math.floor(this.cas.width / 2),
+      x: 10,
       y: Math.floor(this.cas.height - 100)
     }
   }
@@ -78,12 +80,7 @@ export default class Game {
       try {
         for(let key in imgs){
           this.images[key] = await this.loadImage(imgs[key])
-          let ofc
-          if(isOffscreenCanvas){
-            ofc = new OffscreenCanvas(this.images[key].width, this.images[key].height)
-          }else{
-            ofc = document.createElement('canvas')
-          }
+          const ofc = createOffscreenCanvas(this.images[key].width, this.images[key].height)
           this.offscreenCas[key] = ofc;
           (ofc.getContext('2d')! as CanvasRenderingContext2D).drawImage(this.images[key], 0, 0)
         }
@@ -126,7 +123,17 @@ export default class Game {
         '8': this.offscreenCas['8'],
         '9': this.offscreenCas['9'],
       }, this.fps)
-      this.elements['player'] = new Player(this.offscreenCas['player'], this.playerLocation.x, this.playerLocation.y)
+      this.elements['player'] = new Player(
+        {
+          player: this.offscreenCas['player'],
+          propeller1: this.offscreenCas['propeller1'],
+          destroy: this.offscreenCas['destroy'],
+          bullet1: this.offscreenCas['bullet1'],
+          bullet2: this.offscreenCas['bullet2'],
+        },
+        this.playerLocation.x,
+        this.playerLocation.y
+      )
       // 开启事件监听
       this.listeningEvent()
       // 绑定this

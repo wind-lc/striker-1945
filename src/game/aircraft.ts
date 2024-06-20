@@ -3,10 +3,11 @@
  * @Author: wind-lc
  * @version: 1.0
  * @Date: 2024-06-17 14:11:08
- * @LastEditTime: 2024-06-18 14:48:20
+ * @LastEditTime: 2024-06-20 12:16:47
  * @FilePath: \striker-1945\src\game\aircraft.ts
  */
 import GameObject from './gameObject'
+import Bullets from './bullet'
 export default class Aircraft extends GameObject{
   // 离屏画布
   protected cas: HTMLCanvasElement | OffscreenCanvas
@@ -18,6 +19,8 @@ export default class Aircraft extends GameObject{
   protected sCtx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D
   // 生命值
   protected hp: number
+  // 子弹
+  protected bullets: Bullets[] | []
   /**
    * @description: 飞机
    * @param {number} cas 离屏画布
@@ -29,6 +32,7 @@ export default class Aircraft extends GameObject{
    * @param {number} w 宽度
    * @param {number} h 高度
    * @param {number} hp 生命值
+   * @param {Bullets} bullets 子弹
    * @return {void}
    */ 
   constructor(
@@ -40,7 +44,8 @@ export default class Aircraft extends GameObject{
     y: number,
     w: number,
     h: number,
-    hp: number
+    hp: number,
+    bullets: Bullets[] | []
   ){
     super(x, y, w, h)
     this.cas = cas
@@ -48,6 +53,7 @@ export default class Aircraft extends GameObject{
     this.sCas = sCas
     this.sCtx = sCtx
     this.hp = hp
+    this.bullets = bullets
   }
   /**
    * @description: 清空自身离屏画布
