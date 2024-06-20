@@ -31,12 +31,14 @@ export default abstract class GameObject  {
   }
   /**
    * @description: 更新
+   * @param {any[]} args 参数
    * @return {void}
    */  
   abstract update(...args: any[]): void
   /**
    * @description: 绘制
+   * @param {any[]} args 参数
    * @return {void}
-   */ 
+   */  
   abstract draw(...args: any[]): void
 }

@@ -20,13 +20,11 @@ export default class Aircraft extends GameObject{
   // 生命值
   protected hp: number
   // 子弹
-  protected bullets: Bullets[] | []
+  protected bullets: Bullets[]
   /**
    * @description: 飞机
    * @param {number} cas 离屏画布
-   * @param {number} ctx 画布上下文
    * @param {number} sCas 离屏阴影画布
-   * @param {number} sCtx 阴影画布上下文
    * @param {number} x 横轴坐标位置
    * @param {number} y 纵轴坐标位置
    * @param {number} w 宽度
@@ -37,21 +35,19 @@ export default class Aircraft extends GameObject{
    */ 
   constructor(
     cas: HTMLCanvasElement | OffscreenCanvas,
-    ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
     sCas: HTMLCanvasElement | OffscreenCanvas,
-    sCtx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
     x: number,
     y: number,
     w: number,
     h: number,
     hp: number,
-    bullets: Bullets[] | []
+    bullets: Bullets[]
   ){
     super(x, y, w, h)
     this.cas = cas
-    this.ctx = ctx
+    this.ctx = cas.getContext('2d')! as CanvasRenderingContext2D
     this.sCas = sCas
-    this.sCtx = sCtx
+    this.sCtx = sCas.getContext('2d')! as CanvasRenderingContext2D
     this.hp = hp
     this.bullets = bullets
   }

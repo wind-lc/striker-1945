@@ -28,11 +28,13 @@ export default class Fps extends GameObject{
   }
   /**
    * @description: 更新
+   * @param {CanvasRenderingContext2D} ctx 游戏画布对象
    * @param {number} fps 每秒帧数
    * @return {void}
    */
-  update(fps: number): void{
+  update(ctx: CanvasRenderingContext2D, fps: number): void{
     this.fps = fps
+    this.draw(ctx)
   }
   /**
    * @description: 绘制

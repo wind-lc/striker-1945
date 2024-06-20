@@ -3,7 +3,7 @@
  * @Author: wind-lc
  * @version: 1.0
  * @Date: 2024-06-17 15:13:38
- * @LastEditTime: 2024-06-20 11:16:22
+ * @LastEditTime: 2024-06-20 16:47:07
  * @FilePath: \striker-1945\src\game\config.ts
  */
 // 图片类型
@@ -77,9 +77,19 @@ const playerCof = {
   // 螺旋桨图片高度
   pih: 8,
   // 生命值
-  hp: 5
+  hp: 5,
+  // 子弹宽度
+  bw: 11,
+  // 子弹高度
+  bh: 33.3,
+  // 子弹图片宽度
+  biw: 33,
+  // 子弹图片高度
+  bih: 100,
+  // 子弹速度(像素/帧)
+  speed: 10
 }
-//
+// 玩家螺旋桨姿态
 const playerPropellerAttitudeCof: TplayerPropellerAttitudeCof[] = [
   {
     sx: 0,

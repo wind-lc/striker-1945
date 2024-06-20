@@ -3,7 +3,7 @@
  * @Author: wind-lc
  * @version: 1.0
  * @Date: 2024-06-14 11:19:15
- * @LastEditTime: 2024-06-20 15:01:34
+ * @LastEditTime: 2024-06-20 18:02:33
  * @FilePath: \striker-1945\src\game\index.ts
  */
 import { imgs, isOffscreenCanvas, playerCof } from './config'
@@ -67,7 +67,7 @@ export default class Game {
     // 默认底部居中
     this.playerLocation = {
       // x: Math.floor(this.cas.width / 2),
-      x: 10,
+      x: 30,
       y: Math.floor(this.cas.height - 100)
     }
   }
@@ -246,7 +246,7 @@ export default class Game {
       this.fps = this.frameCount
       this.frameCount = 0
       this.lastFpsUpdateTime = currentTime
-      this.elements['fps'].update(this.fps)
+      this.elements['fps'].update(this.ctx, this.fps)
     }
     // 清除画布
     this.ctx.clearRect(0, 0, this.cas.width, this.cas.height)
@@ -254,10 +254,7 @@ export default class Game {
     for(let key in this.elements){
       // 
       if(key === 'player'){
-        this.elements[key].update(currentTime, this.playerLocation.x, this.playerLocation.y)
-        this.elements[key].draw(this.ctx)
-      }else{
-        this.elements[key].draw(this.ctx)
+        this.elements[key].update(this.ctx, currentTime, this.playerLocation.x, this.playerLocation.y)
       }
     }
   }

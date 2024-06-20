@@ -3,7 +3,7 @@
  * @Author: wind-lc
  * @version: 1.0
  * @Date: 2024-06-17 14:45:52
- * @LastEditTime: 2024-06-20 15:00:17
+ * @LastEditTime: 2024-06-20 19:01:45
  * @FilePath: \striker-1945\src\game\player.ts
  */
 import Aircraft from './aircraft'
@@ -52,6 +52,17 @@ export default class Player extends Aircraft{
   lastDestroyTime: number
   // 摧毁索引
   destroyIndex: number
+  // 最后一次开火时间
+  lastFireTime: number
+  // 开火时间时间差
+  updateFireTime: number = 128
+  // 火力等级
+  power: number = 1
+  // 子弹伤害
+  damage: number[] = [2,6]
+  // 子弹图片列表
+  private bulletImg: (HTMLCanvasElement | OffscreenCanvas)[]
+
   /**
    * @description: 玩家
    * @param {TimgCas} imgCas 鼠标拖拽/手指触摸x坐标
@@ -62,9 +73,7 @@ export default class Player extends Aircraft{
   constructor(imgCas: TimgCas, mx: number, my: number){
     super(
       cas,
-      cas.getContext('2d')! as CanvasRenderingContext2D,
       sCas,
-      sCas.getContext('2d')! as CanvasRenderingContext2D,
       Math.floor(mx - playerCof.w / 2),
       my - playerCof.h / 2,
       playerCof.w,
@@ -82,7 +91,13 @@ export default class Player extends Aircraft{
     this.lastPlayerPropellerTime = 0
     this.lastDestroyTime = 0
     this.destroyIndex = 0
+    this.lastFireTime = 0
+    this.bulletImg = [this.imgCas.bullet1, this.imgCas.bullet2]
     this.updateAttitude(4)
+    // setTimeout(()=>{this.hp = 0},1000)
+    setInterval(()=>{
+      this.power = this.power + 1 > 8 ? 8 : this.power +1
+    },2000)
   }
   /**
    * @description: 更新飞机姿态
@@ -92,7 +107,7 @@ export default class Player extends Aircraft{
   private updateAttitude(x: number): void{
     if(x === this.attitudeIndex) return
     this.attitudeIndex = x
-    this.ctx.clearRect(0, playerCof.ph, this.cas.width, this.cas.height - playerCof.ph)
+    this.ctx.clearRect(0, playerCof.ph, this.w, this.h - playerCof.ph)
     this.ctx.drawImage(
       this.imgCas.player,
       playerAttitudeCof[x].sx,
@@ -159,7 +174,7 @@ export default class Player extends Aircraft{
       }else {
         i ++
       }
-      this.ctx.clearRect(0, 0, this.cas.width, playerCof.ph)
+      this.ctx.clearRect(0, 0, this.w, playerCof.ph)
       this.ctx.drawImage(
         this.imgCas.propeller1,
         playerPropellerAttitudeCof[i].sx,
@@ -181,15 +196,15 @@ export default class Player extends Aircraft{
    * @return {void}
    */ 
   private destroy(currentTime: number): void{
-    this.ctx.clearRect(0, 0, this.cas.width, this.cas.height)
+    this.ctx.clearRect(0, 0, this.w, this.h)
     this.ctx.drawImage(
       this.imgCas.destroy,
       destroyAnimationCof[this.destroyIndex].sx,
       destroyAnimationCof[this.destroyIndex].sy,
       destroyCof.w,
       destroyCof.h,
-      this.cas.width / 2 - destroyCof.w / 2,
-      this.cas.height / 2 - destroyCof.h / 2,
+      this.w / 2 - destroyCof.w / 2,
+      this.h / 2 - destroyCof.h / 2,
       destroyCof.w,
       destroyCof.h
     )
@@ -205,62 +220,146 @@ export default class Player extends Aircraft{
    * @param {number} currentTime 当前帧时间
    * @return {void}
    */  
-  fire(){
-    // this.bullets.push(new Bullet())
+  private fire(currentTime: number): void{
+    const x = [this.x - (playerCof.bw + 3) * 2, this.x - (playerCof.bw + 3), this.x, this.x + playerCof.bw + 3, this.x + (playerCof.bw + 3) * 2]
+    const y = [this.y - 10, this.y - 15, this.y - 20, this.y - 15, this.y - 10]
+    const bCof = [
+      [
+        [x[1],y[1]],
+        [x[3],y[3]]
+      ],
+      [
+        [x[1],y[1]],
+        [x[2],y[2]],
+        [x[3],y[3]]
+      ],
+      [
+        [x[0],y[0]],
+        [x[1],y[1]],
+        [x[3],y[3]],
+        [x[4],y[4]]
+      ],
+      [
+        [x[0],y[0]],
+        [x[1],y[1]],
+        [x[2],y[2]],
+        [x[3],y[3]],
+        [x[4],y[4]]
+      ],
+      [
+        [x[1],y[1]],
+        [x[3],y[3]]
+      ],
+      [
+        [x[1],y[1]],
+        [x[2],y[2]],
+        [x[3],y[3]]
+      ],
+      [
+        [x[0],y[0]],
+        [x[1],y[1]],
+        [x[3],y[3]],
+        [x[4],y[4]]
+      ],
+      [
+        [x[0],y[0]],
+        [x[1],y[1]],
+        [x[2],y[2]],
+        [x[3],y[3]],
+        [x[4],y[4]]
+      ],
+    ]
+    for(let i = 0; i < bCof[this.power - 1].length; i++){
+      this.bullets.push(new Bullet(this.bulletImg[this.power > 4 ? 1 : 0], playerCof.bw, playerCof.bh, playerCof.biw, playerCof.bih, bCof[this.power - 1][i][0], bCof[this.power - 1][i][1], playerCof.speed, this.damage[this.power > 4 ? 1 : 0]))
+    }
+    this.lastFireTime = currentTime
+  }
+  /**
+   * @description: 清除子弹
+   * @param {Bullet[]} bullets 子弹列表
+   * @return {void}
+   */  
+  private cleanBullets(bullets: Bullet[]): void{
+    let i = 0
+    while (i < bullets.length) {
+      if (bullets[i].isDestroyed) {
+        bullets.splice(i, 1)
+      } else {
+        i++
+      }
+    }
   }
   /**
    * @description: 更新
+   * @param {CanvasRenderingContext2D} ctx 游戏画布对象
    * @param {number} currentTime 当前帧时间
    * @param {number} x x坐标
    * @param {number} y y坐标
    * @return {void}
    */  
-  update(currentTime: number, x: number = 0, y: number = 0): void{
+  update(ctx: CanvasRenderingContext2D, currentTime: number, x: number = 0, y: number = 0): void{
+    // 更新子弹位置
+    if(this.bullets.length > 0){
+      for(let i = 0; i < this.bullets.length; i++){
+        if(!this.bullets[i].isDestroyed){
+          this.bullets[i].update(ctx, currentTime)
+        }else{
+          this.cleanBullets(this.bullets)
+        }
+      }
+    }
+    // 被摧毁时不再更新位置
     if(this.hp <= 0){
       if(currentTime - this.lastDestroyTime > this.updateDestroyTime){
         this.destroy(currentTime)
       }
-      return
-    }
-    // 飞机螺旋桨更新
-    this.updatePropeller(currentTime)
-    // 飞机姿态更新逻辑
-    const range = x - this.x
-    this.x = x
-    this.y = y
-    if(this.playerLocationX !== x){
-      // 移动中
-      if(this.playerLocationX === null){
-        // 初次默认居中
-        this.updateAttitude(4)
-      }else{
-        this.targetAttitudeIndex = this.getAttitudeIndex(range)
-        if(4 > this.targetAttitudeIndex){
-          this.updateAttitude(this.targetAttitudeIndex)
-        }
-        if(4 < this.targetAttitudeIndex){
-          this.updateAttitude(this.targetAttitudeIndex)
-        }
-        this.lastStopAttitudeTime = currentTime
-      }
-      this.playerLocationX = x
     }else{
-      // 停止
-      if(currentTime - this.lastStopAttitudeTime > this.upadateAttitudeTime){
-        let i = 4
-        // 左自动恢复
-        if(4 > this.attitudeIndex){
-          i = this.attitudeIndex > 4 ? this.attitudeIndex - 1 : 4
+      // 飞机螺旋桨更新
+      this.updatePropeller(currentTime)
+      // 飞机姿态更新逻辑
+      const range = x - this.x
+      this.x = x
+      this.y = y
+      // 开火
+      if(currentTime - this.lastFireTime > this.updateFireTime){
+        this.fire(currentTime)
+      }
+      if(this.playerLocationX !== x){
+        // 移动中
+        if(this.playerLocationX === null){
+          // 初次默认居中
+          this.updateAttitude(4)
+        }else{
+          this.targetAttitudeIndex = this.getAttitudeIndex(range)
+          if(4 > this.targetAttitudeIndex){
+            this.updateAttitude(this.targetAttitudeIndex)
+          }
+          if(4 < this.targetAttitudeIndex){
+            this.updateAttitude(this.targetAttitudeIndex)
+          }
+          this.lastStopAttitudeTime = currentTime
         }
-        // 右自动恢复
-        if(4 < this.attitudeIndex){
-          i = this.attitudeIndex < 4 ? this.attitudeIndex + 1 : 4
+        this.playerLocationX = x
+      }else{
+        // 停止
+        if(currentTime - this.lastStopAttitudeTime > this.upadateAttitudeTime){
+          let i = 4
+          // 左自动恢复
+          if(4 > this.attitudeIndex){
+            i = this.attitudeIndex > 4 ? this.attitudeIndex - 1 : 4
+          }
+          // 右自动恢复
+          if(4 < this.attitudeIndex){
+            i = this.attitudeIndex < 4 ? this.attitudeIndex + 1 : 4
+          }
+          this.updateAttitude(i)
+          this.lastStopAttitudeTime = currentTime
         }
-        this.updateAttitude(i)
-        this.lastStopAttitudeTime = currentTime
+        
       }
       
     }
+    this.draw(ctx)
   }
   /**
    * @description: 绘制
