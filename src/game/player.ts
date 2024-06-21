@@ -3,12 +3,13 @@
  * @Author: wind-lc
  * @version: 1.0
  * @Date: 2024-06-17 14:45:52
- * @LastEditTime: 2024-06-20 19:01:45
+ * @LastEditTime: 2024-06-21 17:35:22
  * @FilePath: \striker-1945\src\game\player.ts
  */
 import Aircraft from './aircraft'
 import Bullet from './bullet'
-import { playerCof, playerAttitudeCof, isOffscreenCanvas, playerPropellerAttitudeCof, destroyCof, destroyAnimationCof } from './config'
+import Missile from './missile'
+import { playerCof, playerAttitudeCof, playerPropellerAttitudeCof, destroyCof, destroyAnimationCof } from './config'
 import { createOffscreenCanvas } from './utils'
 const cas = createOffscreenCanvas(playerCof.w, playerCof.h + playerCof.ph)
 const sCas = createOffscreenCanvas(playerCof.sw, playerCof.sh)
@@ -24,6 +25,8 @@ type TimgCas = {
   bullet1: HTMLCanvasElement | OffscreenCanvas
   // 玩家子弹2
   bullet2: HTMLCanvasElement | OffscreenCanvas
+  // 玩家导弹
+  missile: HTMLCanvasElement | OffscreenCanvas
 }
 export default class Player extends Aircraft{
   // 图片画布
@@ -55,14 +58,21 @@ export default class Player extends Aircraft{
   // 最后一次开火时间
   lastFireTime: number
   // 开火时间时间差
-  updateFireTime: number = 128
+  updateFireTime: number = 80
   // 火力等级
   power: number = 1
   // 子弹伤害
-  damage: number[] = [2,6]
+  bDamage: number[] = [2,6]
   // 子弹图片列表
   private bulletImg: (HTMLCanvasElement | OffscreenCanvas)[]
-
+  // 导弹
+  protected missiles: Missile[]
+  // 最后一次发射导弹时间
+  lastLaunchTime: number
+  // 发射导弹时间差
+  updateLaunchTime: number = 3200
+  // 导弹伤害
+  mDamage: number = 10
   /**
    * @description: 玩家
    * @param {TimgCas} imgCas 鼠标拖拽/手指触摸x坐标
@@ -93,6 +103,8 @@ export default class Player extends Aircraft{
     this.destroyIndex = 0
     this.lastFireTime = 0
     this.bulletImg = [this.imgCas.bullet1, this.imgCas.bullet2]
+    this.missiles = []
+    this.lastLaunchTime = 0
     this.updateAttitude(4)
     // setTimeout(()=>{this.hp = 0},1000)
     setInterval(()=>{
@@ -270,21 +282,49 @@ export default class Player extends Aircraft{
       ],
     ]
     for(let i = 0; i < bCof[this.power - 1].length; i++){
-      this.bullets.push(new Bullet(this.bulletImg[this.power > 4 ? 1 : 0], playerCof.bw, playerCof.bh, playerCof.biw, playerCof.bih, bCof[this.power - 1][i][0], bCof[this.power - 1][i][1], playerCof.speed, this.damage[this.power > 4 ? 1 : 0]))
+      this.bullets.push(new Bullet(this.bulletImg[this.power > 4 ? 1 : 0], playerCof.bw, playerCof.bh, bCof[this.power - 1][i][0], bCof[this.power - 1][i][1], playerCof.bSpeed, this.bDamage[this.power > 4 ? 1 : 0]))
     }
     this.lastFireTime = currentTime
   }
   /**
-   * @description: 清除子弹
-   * @param {Bullet[]} bullets 子弹列表
+   * @description: 更新子弹位置
+   * @param {CanvasRenderingContext2D} ctx 游戏画布对象
+   * @param {number} currentTime 当前帧时间
    * @return {void}
    */  
-  private cleanBullets(bullets: Bullet[]): void{
+  private updateBullets(ctx: CanvasRenderingContext2D, currentTime: number): void{
     let i = 0
-    while (i < bullets.length) {
-      if (bullets[i].isDestroyed) {
-        bullets.splice(i, 1)
+    while (i < this.bullets.length) {
+      if (this.bullets[i].isDestroyed) {
+        this.bullets.splice(i, 1)
       } else {
+        this.bullets[i].update(ctx, currentTime)
+        i++
+      }
+    }
+  }
+  /**
+   * @description: 发射导弹
+   * @param {number} currentTime 当前帧时间
+   * @return {void}
+   */  
+  private launch(currentTime: number): void{
+    this.missiles.push(new Missile(this.imgCas.missile, playerCof.mw, playerCof.mh, this.x, this.y, playerCof.mSpeed, this.mDamage, true))
+    this.lastLaunchTime = currentTime
+  }
+  /**
+   * @description: 更新导弹位置
+   * @param {CanvasRenderingContext2D} ctx 游戏画布对象
+   * @param {number} currentTime 当前帧时间
+   * @return {void}
+   */
+  private updateMissiles(ctx: CanvasRenderingContext2D, currentTime: number): void{
+    let i = 0
+    while (i < this.missiles.length) {
+      if (this.missiles[i].isDestroyed) {
+        this.missiles.splice(i, 1)
+      } else {
+        this.missiles[i].update(ctx, currentTime)
         i++
       }
     }
@@ -300,15 +340,13 @@ export default class Player extends Aircraft{
   update(ctx: CanvasRenderingContext2D, currentTime: number, x: number = 0, y: number = 0): void{
     // 更新子弹位置
     if(this.bullets.length > 0){
-      for(let i = 0; i < this.bullets.length; i++){
-        if(!this.bullets[i].isDestroyed){
-          this.bullets[i].update(ctx, currentTime)
-        }else{
-          this.cleanBullets(this.bullets)
-        }
-      }
+      this.updateBullets(ctx, currentTime)
     }
-    // 被摧毁时不再更新位置
+    // 更导弹弹位置
+    if(this.missiles.length > 0){
+      this.updateMissiles(ctx, currentTime)
+    }
+    // 被摧毁时不再更新飞机位置
     if(this.hp <= 0){
       if(currentTime - this.lastDestroyTime > this.updateDestroyTime){
         this.destroy(currentTime)
@@ -321,8 +359,12 @@ export default class Player extends Aircraft{
       this.x = x
       this.y = y
       // 开火
-      if(currentTime - this.lastFireTime > this.updateFireTime){
-        this.fire(currentTime)
+      if(currentTime - this.lastFireTime > this.updateFireTime || this.lastFireTime === 0){
+        // this.fire(currentTime)
+      }
+      // 发射导弹
+      if(currentTime - this.lastLaunchTime > this.updateLaunchTime || this.lastLaunchTime === 0){
+        this.launch(currentTime)
       }
       if(this.playerLocationX !== x){
         // 移动中

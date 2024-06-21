@@ -3,7 +3,7 @@
  * @Author: wind-lc
  * @version: 1.0
  * @Date: 2024-06-17 15:13:38
- * @LastEditTime: 2024-06-20 16:47:07
+ * @LastEditTime: 2024-06-21 18:06:10
  * @FilePath: \striker-1945\src\game\config.ts
  */
 // 图片类型
@@ -87,7 +87,17 @@ const playerCof = {
   // 子弹图片高度
   bih: 100,
   // 子弹速度(像素/帧)
-  speed: 10
+  bSpeed: 16,
+  // 导弹宽度
+  mw: 12,
+  // 导弹高度
+  mh: 34,
+  // 导弹图片宽度
+  miw: 12,
+  // 导弹图片高度
+  mih: 34,
+  // 导弹速度(像素/帧)
+  mSpeed: 2
 }
 // 玩家螺旋桨姿态
 const playerPropellerAttitudeCof: TplayerPropellerAttitudeCof[] = [
@@ -263,7 +273,9 @@ const imgs:TImg = {
   'player': '/src/assets/img/player.webp',
   'destroy': '/src/assets/img/destroy.webp',
   'bullet1': '/src/assets/img/bullet1.webp',
-  'bullet2': '/src/assets/img/bullet2.webp'
+  'bullet2': '/src/assets/img/bullet2.webp',
+  'missile1': '/src/assets/img/missile1.webp',
+  'missile2': '/src/assets/img/missile2.webp',
 }
 export {
   isOffscreenCanvas,

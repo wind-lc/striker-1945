@@ -3,7 +3,7 @@
  * @Author: wind-lc
  * @version: 1.0
  * @Date: 2024-06-14 11:19:15
- * @LastEditTime: 2024-06-20 18:02:33
+ * @LastEditTime: 2024-06-21 18:07:10
  * @FilePath: \striker-1945\src\game\index.ts
  */
 import { imgs, isOffscreenCanvas, playerCof } from './config'
@@ -130,6 +130,7 @@ export default class Game {
           destroy: this.offscreenCas['destroy'],
           bullet1: this.offscreenCas['bullet1'],
           bullet2: this.offscreenCas['bullet2'],
+          missile: this.offscreenCas['missile1'],
         },
         this.playerLocation.x,
         this.playerLocation.y
