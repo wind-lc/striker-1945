@@ -3,10 +3,11 @@
  * @Author: wind-lc
  * @version: 1.0
  * @Date: 2024-06-14 11:19:15
- * @LastEditTime: 2024-06-21 18:07:10
+ * @LastEditTime: 2024-06-24 18:16:49
  * @FilePath: \striker-1945\src\game\index.ts
  */
-import { imgs, isOffscreenCanvas, playerCof } from './config'
+import { imgs, isOffscreenCanvas, playerCof, processCof } from './config'
+import EnemyAircraft from './enemyAircraft'
 import Fps from './fps'
 import Player from './player'
 import { createOffscreenCanvas } from './utils'
@@ -41,7 +42,15 @@ export default class Game {
   // 图片资源
   private images: { [index: string]: HTMLImageElement }
   // 所有元素
-  private elements: { [index: string]: Fps | Player }
+  private elements: { [index: string]: Fps | Player | EnemyAircraft}
+  // 游戏主程序时间
+  private time: number
+  // 游戏关卡索引
+  private index: number
+  // 游戏进程索引
+  private processIndex: number
+  // 游戏最后一次进程时间
+  private lastProcessTime: number
   // 玩家飞机位置(拖拽位置，敌人目标位置)
   private playerLocation: {[index: string]: number}
   /**
@@ -64,11 +73,15 @@ export default class Game {
     this.offscreenCas = {}
     this.images = {}
     this.elements = {}
+    this.time = 0
+    this.index = 0
+    this.processIndex = 0
+    this.lastProcessTime = 0
     // 默认底部居中
     this.playerLocation = {
       // x: Math.floor(this.cas.width / 2),
-      x: 30,
-      y: Math.floor(this.cas.height - 100)
+      x: 10,
+      y: Math.floor(this.cas.height - 30)
     }
   }
   /**
@@ -104,6 +117,26 @@ export default class Game {
     })
   }
   /**
+   * @description: 游戏进程
+   * @param {number} currentTime 当前帧时间
+   * @return {void}
+   */  
+  private process(currentTime: number): void{
+    if(this.lastProcessTime > 0){
+      const process = processCof[this.index][this.processIndex]
+      // 大于等于进程间隔时间
+      if(currentTime - this.lastProcessTime >= process.interval){
+        // const list = []
+        // for(let i = 0; i < process.quantity; i++){
+        //   const air = new EnemyAircraft(process.name, )
+        //   list.push(air)
+        //   this.elements[process.name] = air
+        // }
+        
+      }
+    }
+  }
+  /**
    * @description: 游戏初始化
    * @return {void}
    */
@@ -111,6 +144,7 @@ export default class Game {
     console.log('初始化中...')
     this.loadResources().then(() => {
       console.log('初始化完成')
+      // 开始监测FPS
       this.elements['fps'] = new Fps({
         '0': this.offscreenCas['0'],
         '1': this.offscreenCas['1'],
@@ -123,6 +157,7 @@ export default class Game {
         '8': this.offscreenCas['8'],
         '9': this.offscreenCas['9'],
       }, this.fps)
+      // 生成玩家
       this.elements['player'] = new Player(
         {
           player: this.offscreenCas['player'],
@@ -274,11 +309,18 @@ export default class Game {
    * @return {void}
    */  
   private loop(currentTime: number): void{
+    console.log(currentTime)
     // 增量时间
     const deltaTime = currentTime - this.lastFrameTime;
     // 如果当前帧与上一帧的时间差大于等于目标帧的时间间隔，则更新和绘制下一帧
     if(currentTime - this.lastFrameTime >= this.targetFrameDuration){
       this.update(currentTime, deltaTime)
+    }
+    if(this.time === 0){
+      this.time = currentTime
+      this.lastProcessTime = currentTime
+    }else {
+      this.process(currentTime)
     }
     requestAnimationFrame(this.loop)
   }

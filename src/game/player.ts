@@ -3,7 +3,7 @@
  * @Author: wind-lc
  * @version: 1.0
  * @Date: 2024-06-17 14:45:52
- * @LastEditTime: 2024-06-24 14:52:19
+ * @LastEditTime: 2024-06-24 15:03:18
  * @FilePath: \striker-1945\src\game\player.ts
  */
 import Aircraft from './aircraft'
@@ -77,7 +77,7 @@ export default class Player extends Aircraft{
   mDamage: number = 10
   /**
    * @description: 玩家
-   * @param {TimgCas} imgCas 鼠标拖拽/手指触摸x坐标
+   * @param {TimgCas} imgCas 图片画布对象
    * @param {number} mx 鼠标拖拽/手指触摸x坐标
    * @param {number} my 鼠标拖拽/手指触摸y坐标
    * @return {void}
@@ -108,10 +108,9 @@ export default class Player extends Aircraft{
     this.missiles = []
     this.lastLaunchTime = 0
     this.updateAttitude(4)
-    // setTimeout(()=>{this.hp = 0},1000)
-    setInterval(()=>{
-      this.power = this.power + 1 > 8 ? 8 : this.power +1
-    },2000)
+    // setInterval(()=>{
+    //   this.power = this.power + 1 > 8 ? 8 : this.power +1
+    // },2000)
   }
   /**
    * @description: 更新飞机姿态

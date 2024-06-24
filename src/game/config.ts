@@ -3,7 +3,7 @@
  * @Author: wind-lc
  * @version: 1.0
  * @Date: 2024-06-17 15:13:38
- * @LastEditTime: 2024-06-24 14:47:34
+ * @LastEditTime: 2024-06-24 16:26:26
  * @FilePath: \striker-1945\src\game\config.ts
  */
 // 图片类型
@@ -89,23 +89,23 @@ const playerCof = {
   // 子弹速度(像素/帧)
   bSpeed: 16,
   // 导弹宽度
-  mw: 12,
+  mw: 9,
   // 导弹高度
-  mh: 34,
+  mh: 25.5,
   // 导弹图片宽度
   miw: 12,
   // 导弹图片高度
   mih: 34,
   // 导弹尾焰宽度
-  mtw: 10,
+  mtw: 7.5,
   // 导弹尾焰高度
-  mth: 20,
+  mth: 15,
   // 导弹尾焰图片宽度
   mtiw: 10,
   // 导弹尾焰图片高度
   mtih: 20,
   // 导弹速度(像素/帧)
-  mSpeed: 4
+  mSpeed: 2
 }
 // 玩家螺旋桨姿态
 const playerPropellerAttitudeCof: TplayerPropellerAttitudeCof[] = [
@@ -276,6 +276,79 @@ const tailFlameAnimationCof = [
     sy: 0
   }
 ]
+// 敌机配置
+const enemyAircraftCof = [
+  {
+    // 宽度
+    w: 55,
+    // 高度
+    h: 48,
+    // 图片宽度
+    iw: 55,
+    // 图片高度
+    ih: 48,
+    // 正常截取位置x
+    sx: 0,
+    // 正常截取位置y
+    sy: 0,
+    // 中弹截取位置x
+    hsx: 55,
+    // 中弹截取位置y
+    hsy: 0,
+    // 阴影截取位置x
+    ssx: 110,
+    // 阴影截取位置y
+    ssy: 0
+  },
+  {
+    // 宽度
+    w: 50,
+    // 高度
+    h: 44,
+    // 图片宽度
+    iw: 50,
+    // 图片高度
+    ih: 44,
+    // 正常截取位置x
+    sx: 0,
+    // 正常截取位置y
+    sy: 0,
+    // 中弹截取位置x
+    hsx: 50,
+    // 中弹截取位置y
+    hsy: 0,
+    // 阴影截取位置x
+    ssx: 100,
+    // 阴影截取位置y
+    ssy: 0
+  }
+]
+// 游戏进程配置
+const processCof = [
+  [
+    // 敌机1，10架
+    {
+      // 名称
+      name: 'aircraft1',
+      // 间隔时间
+      interval: 3000,
+      // 图片
+      imgName: 'aircraft1',
+      // 数量
+      quantity: 10,
+      // 起始位置x
+      x: 100,
+      // 起始位置y
+      y: -100,
+      // 移动方式
+      mobileMode: 'down',
+      // 生命值
+      hp: 10,
+      // 子弹
+      // bulletName: 'bullet3'
+    }
+  ]
+]
 // 所有图片
 const imgs:TImg = {
   '0': '/src/assets/img/0.webp',
@@ -296,6 +369,7 @@ const imgs:TImg = {
   'missile1': '/src/assets/img/missile1.webp',
   'missile2': '/src/assets/img/missile2.webp',
   'tailFlame': '/src/assets/img/tailFlame.webp',
+  'aircraft1': '/src/assets/img/aircraft1.webp',
 }
 export {
   isOffscreenCanvas,
@@ -306,6 +380,8 @@ export {
   destroyCof,
   destroyAnimationCof,
   tailFlameAnimationCof,
+  enemyAircraftCof,
+  processCof,
   imgs
 }
 
