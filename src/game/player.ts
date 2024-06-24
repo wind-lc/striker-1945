@@ -3,7 +3,7 @@
  * @Author: wind-lc
  * @version: 1.0
  * @Date: 2024-06-17 14:45:52
- * @LastEditTime: 2024-06-21 17:35:22
+ * @LastEditTime: 2024-06-24 14:52:19
  * @FilePath: \striker-1945\src\game\player.ts
  */
 import Aircraft from './aircraft'
@@ -27,6 +27,8 @@ type TimgCas = {
   bullet2: HTMLCanvasElement | OffscreenCanvas
   // 玩家导弹
   missile: HTMLCanvasElement | OffscreenCanvas
+  // 玩家导弹尾焰
+  tailFlame: HTMLCanvasElement | OffscreenCanvas
 }
 export default class Player extends Aircraft{
   // 图片画布
@@ -309,7 +311,8 @@ export default class Player extends Aircraft{
    * @return {void}
    */  
   private launch(currentTime: number): void{
-    this.missiles.push(new Missile(this.imgCas.missile, playerCof.mw, playerCof.mh, this.x, this.y, playerCof.mSpeed, this.mDamage, true))
+    this.missiles.push(new Missile(this.imgCas.missile, this.imgCas.tailFlame, playerCof.mw, playerCof.mh, playerCof.mtw, playerCof.mth, this.x + 15, this.y, playerCof.mSpeed, this.mDamage, true, currentTime), )
+    this.missiles.push(new Missile(this.imgCas.missile, this.imgCas.tailFlame, playerCof.mw, playerCof.mh, playerCof.mtw, playerCof.mth, this.x - 15, this.y, playerCof.mSpeed, this.mDamage, true, currentTime))
     this.lastLaunchTime = currentTime
   }
   /**
@@ -324,7 +327,7 @@ export default class Player extends Aircraft{
       if (this.missiles[i].isDestroyed) {
         this.missiles.splice(i, 1)
       } else {
-        this.missiles[i].update(ctx, currentTime)
+        this.missiles[i].update(ctx, currentTime, 100, 300)
         i++
       }
     }
@@ -364,7 +367,7 @@ export default class Player extends Aircraft{
       }
       // 发射导弹
       if(currentTime - this.lastLaunchTime > this.updateLaunchTime || this.lastLaunchTime === 0){
-        this.launch(currentTime)
+        // this.launch(currentTime)
       }
       if(this.playerLocationX !== x){
         // 移动中
@@ -397,9 +400,7 @@ export default class Player extends Aircraft{
           this.updateAttitude(i)
           this.lastStopAttitudeTime = currentTime
         }
-        
       }
-      
     }
     this.draw(ctx)
   }

@@ -3,7 +3,7 @@
  * @Author: wind-lc
  * @version: 1.0
  * @Date: 2024-06-17 15:13:38
- * @LastEditTime: 2024-06-21 18:06:10
+ * @LastEditTime: 2024-06-24 14:47:34
  * @FilePath: \striker-1945\src\game\config.ts
  */
 // 图片类型
@@ -96,8 +96,16 @@ const playerCof = {
   miw: 12,
   // 导弹图片高度
   mih: 34,
+  // 导弹尾焰宽度
+  mtw: 10,
+  // 导弹尾焰高度
+  mth: 20,
+  // 导弹尾焰图片宽度
+  mtiw: 10,
+  // 导弹尾焰图片高度
+  mtih: 20,
   // 导弹速度(像素/帧)
-  mSpeed: 2
+  mSpeed: 4
 }
 // 玩家螺旋桨姿态
 const playerPropellerAttitudeCof: TplayerPropellerAttitudeCof[] = [
@@ -257,6 +265,17 @@ const destroyAnimationCof = [
     sy: 0
   }
 ]
+// 导弹尾焰动画
+const tailFlameAnimationCof = [
+  {
+    sx: 0,
+    sy: 0
+  },
+  {
+    sx: 10,
+    sy: 0
+  }
+]
 // 所有图片
 const imgs:TImg = {
   '0': '/src/assets/img/0.webp',
@@ -276,6 +295,7 @@ const imgs:TImg = {
   'bullet2': '/src/assets/img/bullet2.webp',
   'missile1': '/src/assets/img/missile1.webp',
   'missile2': '/src/assets/img/missile2.webp',
+  'tailFlame': '/src/assets/img/tailFlame.webp',
 }
 export {
   isOffscreenCanvas,
@@ -285,6 +305,7 @@ export {
   playerAttitudeCof,
   destroyCof,
   destroyAnimationCof,
+  tailFlameAnimationCof,
   imgs
 }
 

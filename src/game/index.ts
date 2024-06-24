@@ -131,6 +131,7 @@ export default class Game {
           bullet1: this.offscreenCas['bullet1'],
           bullet2: this.offscreenCas['bullet2'],
           missile: this.offscreenCas['missile1'],
+          tailFlame: this.offscreenCas['tailFlame'],
         },
         this.playerLocation.x,
         this.playerLocation.y
